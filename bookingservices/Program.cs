@@ -15,15 +15,15 @@ namespace BookingServices
 
     public static class BookingManager
     {
-        private static string filePath = @"C:\Users\30111549\source\repos\BookMyShow\bookings.txt";
+        private static string bookingFilePath = @"C:\Users\30111549\source\repos\BookMyShow\bookings.txt";
         private static string musicalFilePath = @"C:\Users\30111549\source\repos\BookMyShow\musicals.txt";
 
         public static List<Booking> LoadBookings()
         {
             List<Booking> bookings = new List<Booking>();
-            if (File.Exists(filePath))
+            if (File.Exists(bookingFilePath))
             {
-                string[] lines = File.ReadAllLines(filePath);
+                string[] lines = File.ReadAllLines(bookingFilePath);
                 foreach (string line in lines)
                 {
                     string[] parts = line.Split('|');
@@ -47,12 +47,18 @@ namespace BookingServices
             {
                 lines.Add($"{booking.BookingId}|{booking.MusicalId}|{booking.Quantity}|{booking.TotalPrice}");
             }
-            File.WriteAllLines(filePath, lines);
+            File.WriteAllLines(bookingFilePath, lines);
         }
 
         public static void CreateBooking()
         {
-            List<Musical> musicals = MusicalCatalog.LoadMusicals();
+            List<Musical> musicals = MusicalCatalog.LoadMusicals(); // Load musical shows
+
+            if (musicals.Count == 0)
+            {
+                Console.WriteLine("No musicals available for booking.");
+                return;
+            }
 
             Console.Write("Enter Musical ID: ");
             if (!int.TryParse(Console.ReadLine(), out int musicalId))
@@ -61,21 +67,34 @@ namespace BookingServices
                 return;
             }
 
-            Console.Write("Enter Number of Tickets: ");
-            if (!int.TryParse(Console.ReadLine(), out int quantity) || quantity <= 0)
-            {
-                Console.WriteLine("Invalid quantity. Must be a positive number.");
-                return;
-            }
-
             var musical = musicals.Find(m => m.Id == musicalId);
 
             if (musical == null)
             {
-                Console.WriteLine($"Musical with ID {musicalId} not found.");
+                Console.WriteLine("Musical not found.");
                 return;
             }
 
+            Console.Write($"Enter Number of Tickets (Available: {musical.SeatsAvailable}): ");
+            if (!int.TryParse(Console.ReadLine(), out int quantity) || quantity <= 0)
+            {
+                Console.WriteLine("Invalid ticket count. Must be a positive number.");
+                return;
+            }
+
+            if (musical.SeatsAvailable < quantity)
+            {
+                Console.WriteLine($"Only {musical.SeatsAvailable} seats are available. Cannot book {quantity} tickets.");
+                return;
+            }
+
+            // Update available seats in the musical
+            musical.SeatsAvailable -= quantity;
+
+            // Save updated musicals back to file
+            MusicalCatalog.SaveMusicals(musicals);
+
+            // Create new booking
             List<Booking> bookings = LoadBookings();
             int newId = (bookings.Count > 0) ? bookings[^1].BookingId + 1 : 1;
             var booking = new Booking
@@ -88,7 +107,7 @@ namespace BookingServices
 
             bookings.Add(booking);
             SaveBookings(bookings);
-            Console.WriteLine("Booking successful!");
+            Console.WriteLine($"Booking successful! {quantity} tickets booked for {musical.Name}.");
         }
     }
 
