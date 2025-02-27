@@ -19,6 +19,8 @@ namespace MusicalServices
     public static class MusicalCatalog
     {
         private static string filePath = @"C:\Users\30111549\source\repos\BookMyShow\musicals.txt";
+        // private static string filePath = Path.Combine(Directory.GetCurrentDirectory(), "musicals.txt");
+       // private static string filePath = "/app/data/musicals.txt";
 
         public static List<Musical> LoadMusicals()
         {
@@ -29,7 +31,7 @@ namespace MusicalServices
                 foreach (string line in lines)
                 {
                     string[] parts = line.Split('|');
-                    if (parts.Length == 7 && // ✅ Ensuring correct field count
+                    if (parts.Length == 7 && //  Ensuring correct field count
                         int.TryParse(parts[0], out int id) &&
                         decimal.TryParse(parts[2], out decimal price) &&
                         int.TryParse(parts[3], out int seats))
@@ -52,13 +54,13 @@ namespace MusicalServices
 
         public static void SaveMusicals(List<Musical> musicals)
         {
-            using (StreamWriter writer = new StreamWriter(filePath, false)) // ✅ Ensures proper write operation
+            using (StreamWriter writer = new StreamWriter(filePath, false)) //  Ensures proper write operation
             {
                 foreach (var musical in musicals)
                 {
                     writer.WriteLine($"{musical.Id}|{musical.Name}|{musical.Price}|{musical.SeatsAvailable}|{musical.Venue}|{musical.Date}|{musical.Time}");
                 }
-                writer.Flush(); // ✅ Ensures data is written to disk
+                writer.Flush(); //  Ensures data is written to disk
             }
         }
 
