@@ -18,8 +18,8 @@ namespace MusicalServices
 
     public static class MusicalCatalog
     {
-        private static string filePath = @"C:\Users\30111549\source\repos\BookMyShow\musicals.txt";
-        // private static string filePath = Path.Combine(Directory.GetCurrentDirectory(), "musicals.txt");
+       // private static string filePath = @"C:\Users\30111549\source\repos\BookMyShow\musicals.txt";
+         private static string filePath = Path.Combine(Directory.GetCurrentDirectory(), "musicals.txt");
        // private static string filePath = "/app/data/musicals.txt";
 
         public static List<Musical> LoadMusicals()

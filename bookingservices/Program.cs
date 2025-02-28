@@ -15,11 +15,9 @@ namespace BookingServices
 
     public static class BookingManager
     {
-        private static string bookingFilePath = @"C:\Users\30111549\source\repos\BookMyShow\bookings.txt";
-        private static string musicalFilePath = @"C:\Users\30111549\source\repos\BookMyShow\musicals.txt";
+        //private static string bookingFilePath = @"C:\Users\30111549\source\repos\BookMyShow\bookings.txt";
 
-       // private static string bookingFilePath = Path.Combine(Directory.GetCurrentDirectory(), "bookings.txt");
-       // private static string musicalFilePath = Path.Combine("/app/data", "musicals.txt");
+        private static string bookingFilePath = Path.Combine(Directory.GetCurrentDirectory(), "bookings.txt");
 
         public static List<Booking> LoadBookings()
         {
